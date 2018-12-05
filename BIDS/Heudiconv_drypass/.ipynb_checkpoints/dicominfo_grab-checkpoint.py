@@ -34,8 +34,16 @@ set_parser()
 
 # grab dicominfo.tsv file by running heudiconv command --aka "DRY PASS"
 studyname = arglist["STUDY"]
-dcmpath=arglist["DCMPATH"]
-outpath = arglist["OUT"]
+dcmpath= "/test"+arglist["DCMPATH"]
+outpath = "/test"+arglist["OUT"]
 newpath = dcmpath.replace(studyname, "{subject}")
 heudiconv_cmd = "singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv.simg heudiconv -d %s -s %s -f convertall -c none -o %s"%(newpath, studyname, outpath)
-run_batch=subprocess.Popen(["/Users/nikkibytes/Documents/TheBrainPipeline/BIDS/drypass.job", heudiconv_cmd])
+#print(newpath)
+#print(heudiconv_cmd)
+#run_batch=subprocess.Popen(["/Users/nikkibytes/Documents/TheBrainPipeline/BIDS/drypass.job", heudiconv_cmd])
+
+dicominfo = os.path.join("/Users/nikkibytes/Documents/testing/BRO/.heudiconv", studyname, "info", "dicominfo.tsv")
+print(dicominfo)
+import pandas as pd
+dcm_df = pd.read_csv(dicominfo, sep='\t', header=None)
+print(dcm_df)
