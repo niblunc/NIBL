@@ -46,4 +46,5 @@ dicominfo = os.path.join("/Users/nikkibytes/Documents/testing/BRO/.heudiconv", s
 print(dicominfo)
 import pandas as pd
 dcm_df = pd.read_csv(dicominfo, sep='\t', header=None)
-print(dcm_df)
+refined_dcm_df = dcm_df.iloc[:, 6:13]
+print(refined_dcm_df)
