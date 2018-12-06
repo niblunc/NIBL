@@ -42,9 +42,10 @@ heudiconv_cmd = "singularity exec -B /:/test /projects/niblab/bids_projects/Sing
 #print(heudiconv_cmd)
 #run_batch=subprocess.Popen(["/Users/nikkibytes/Documents/TheBrainPipeline/BIDS/drypass.job", heudiconv_cmd])
 
-dicominfo = os.path.join("/Users/nikkibytes/Documents/testing/BRO/.heudiconv", studyname, "info", "dicominfo.tsv")
-print(dicominfo)
+#dicominfo_tsv = os.path.join("/Users/nikkibytes/Documents/testing/BRO/.heudiconv", studyname, "info", "dicominfo.tsv")
+#print(dicominfo_tsv)
+dicominfo_tsv = "dicominfo.tsv"
 import pandas as pd
-dcm_df = pd.read_csv(dicominfo, sep='\t', header=None)
+dcm_df = pd.read_csv(dicominfo_tsv, sep='\t', header=None)
 refined_dcm_df = dcm_df.iloc[:, 6:13]
 print(refined_dcm_df)

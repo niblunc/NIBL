@@ -6,4 +6,4 @@
 #SBATCH -t 0:30:00
 
 cmd=$1
-$cmd 
+$cmd
