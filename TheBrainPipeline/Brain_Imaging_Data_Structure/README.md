@@ -53,13 +53,26 @@ Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)
 Reference here for the BIDS specs: [BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
 Single Session Directory: 
 ```
-- sub-001/
-  - anat/
-    - sub-001_T1w.nii.gz
-    - sub-001_T1w.json
-  - func/ 
-    - sub-001_task-A_bold.nii.gz 
-    - sub-001_task-A_bold.json
-    - sub-001_task-A_events.tsv
+● sub-001/
+  ○ anat/
+    ■ sub-001_T1w.nii.gz
+    ■ sub-001_T1w.json
+  ○ func/ 
+    ■ sub-001_task-A_bold.nii.gz 
+    ■ sub-001_task-A_bold.json
+    ■ sub-001_task-A_events.tsv
     ■ sub-001_task-A_physio.tsv.gz
     ■ sub-001_task-A_physio.json
+  ○ fmap/
+    ■ sub-001_phasediff.nii.gz
+    ■ sub-001_phasediff.json
+    ■ sub-001_magnitude1.nii.gz
+  ○ sub-001_scans.tsv
+● code
+  ○ deface.py
+● derivatives 
+  ○ README
+● participants.tsv
+● dataset_description.json
+● README
+● CHANGES
