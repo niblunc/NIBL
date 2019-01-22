@@ -32,14 +32,18 @@ A great explanation is found here: [Using Heudiconv](http://nipy.org/heudiconv/#
 Then you can modify the template we have here: [Heuristic File template](ADD_LINK_HERE)  
 
 
-### Run th GUI  
+### Run the GUI  
 Now that the the heuristic file is setup and the subjects have been renamed we can run the bids conversion process. One way we do this is to run the GUI. You can find that here, `/projects/niblab/bids_projects/BIDS_GUI` , in RENCI.  
 ```
 # change to the directory
 cd /projects/niblab/bids_projects/BIDS_GUI
 # start the GUI 
 python BIDS_GUI.py 
-```
+```  
+  
+The GUI has a few assumptions:
+- The subject folders are labeled with the prefix `sub-`, if you need to do this reference: [Rename_Folders.ipynb](ADD_LINK_HERE)  
+
 ### Setup batch script & run 
 Here we are going to go over the batch script and setting it up.  
 Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)
