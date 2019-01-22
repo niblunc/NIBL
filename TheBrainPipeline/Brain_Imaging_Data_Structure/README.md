@@ -49,9 +49,9 @@ Here we are going to go over the batch script and setting it up.
 Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
   
   
-### Cleaning up the BIDS directory. 
+### Cleaning up the BIDS directory
 Reference here for the BIDS specs: [BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
-Single Session Directory: 
+Single Session Directory Example: 
 ```
 ● sub-001/
   ○ anat/
@@ -76,3 +76,5 @@ Single Session Directory:
 ● dataset_description.json
 ● README
 ● CHANGES
+```  
+
