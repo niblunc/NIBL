@@ -46,4 +46,20 @@ The GUI has a few assumptions:
 
 ### Setup batch script & run 
 Here we are going to go over the batch script and setting it up.  
-Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)
+Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
+  
+  
+### Cleaning up the BIDS directory. 
+Reference here for the BIDS specs: [BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
+Single Session Directory: 
+```
+- sub-001/
+  - anat/
+    - sub-001_T1w.nii.gz
+    - sub-001_T1w.json
+  - func/ 
+    - sub-001_task-A_bold.nii.gz 
+    - sub-001_task-A_bold.json
+    - sub-001_task-A_events.tsv
+    ■ sub-001_task-A_physio.tsv.gz
+    ■ sub-001_task-A_physio.json
