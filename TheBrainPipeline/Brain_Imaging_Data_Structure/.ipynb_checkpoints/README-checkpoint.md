@@ -30,7 +30,7 @@ One of the specifications of BIDS is the naming scheme. While this can be meticu
 ### Setting up the Heuristic File  
 A great explanation is found here: [Using Heudiconv](http://nipy.org/heudiconv/#21)  
 BIDS has very specific naming structures, a summarized document is currently being created to help the team but for now please reference the specs documentation: [BIDS Specs](https://bids.neuroimaging.io/bids_spec.pdf)   
-To get the values we need to fill out the heuristic file we can run a "dry pass" on our subjects and look at the `dicominfo.tsv` file. You can run this manually and look at the file yourself or you can run the scripts from the terminal and see the output. *For now* the script will drypass all the input subjects given and then you can run the second script to view a specific subject. Often times it is best to have all the subjects because there are cases the values vary, this is rare, but it has occured and you can reference the individuals files if needed. The scripts are found here [Heudiconv_DryPass]() but you can also find them already on RENCI, no modification is needed, just follow the workflow below.  
+To get the values we need to fill out the heuristic file we can run a "dry pass" on our subjects and look at the `dicominfo.tsv` file. You can run this manually and look at the file yourself or you can run the scripts from the terminal and see the output. *For now* the script will drypass all the input subjects given and then you can run the second script to view a specific subject. Often times it is best to have all the subjects because there are cases the values vary, this is rare, but it has occured and you can reference the individuals files if needed. The scripts are found here [Heudiconv_DryPass](https://github.com/niblunc/NIBL/tree/master/TheBrainPipeline/Brain_Imaging_Data_Structure/Heudiconv_Drypass) but you can also find them already on RENCI, no modification is needed, just follow the workflow below.  
 The two step process:
 I. Run the `get_dicominfo.py` script, this requires 3 inputs:  
     A. The input directory that holds the subjects (right now the script runs on all found subjects, will be modified to select desired subjects only)  
@@ -45,14 +45,16 @@ II. Run the `read_tsv.py` script, requires 2 inputs:
 cd /projects/niblab/bids_projects/Heudiconv_drypass
 
 # run the get_dicominfo.py script
-python get_dicominfo.py -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -out 
-/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -ext dcm
+python get_dicominfo.py -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test 
+-out /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -ext dcm
 
 # run the read_tsv.py script 
 python read_tsv.py -subj sub-031 -in 
 /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test
 
-```
+```  
+
+Once you get your values you can use them to fill in the heuristic file!  
 For an example heuristic file reference here: [Heuristic Example](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_example.py)  
 Then you can modify the template we have here: [Heuristic File template](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_template.py)    
 
@@ -61,11 +63,29 @@ Then you can modify the template we have here: [Heuristic File template](https:/
 
 ### Run the GUI  
 Now that the the heuristic file is setup and the subjects have been renamed we can run the bids conversion process. One way we do this is to run the GUI. You can find that here, `/projects/niblab/bids_projects/BIDS_GUI` , in RENCI.  
+
+The GUI has a few assumptions:
+- The subject folders are labeled with the prefix `sub-`, if you need to do this reference: [Rename_Folders.ipynb](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/Rename_Folders.ipynb)  
+- The GUI assumes the dicoms are listed directly after the subject folders, therefore it assumes the structure is: /my/directory/path/is/maindir/sub-XXX/*dcm  
+- Currently the GUI grabs all subject folders found from the given input directory, it then will run a conversion on all the confirmed subjects, future updates will allow the selection of a single, or specific subjects.  
+
+The Current Inputs:  
+- Input Directory: the directory where the subject folders are held
+- Output Directory: where you want your BIDS data to be held
+- Heuristic File: the already made heuristic file  
+- Dicom Extension: the dicom extension dcm or IMA  
+- Multiple sessions: yes or no  
+- Session: enter the session id IF multiple sessions is yes  
+
+The GUI will be updated to:  
+- Identify "dcm" or "IMA" without input
+- Will allow you to select specific subjects
+
 ```
 # change to the directory
 cd /projects/niblab/bids_projects/BIDS_GUI
 # start the GUI 
-python BIDS_GUI.py 
+python gui.py 
 ```  
   
 When you press "CONVERT" the terminal will output that a batch job has been submitted, please use `squeue -u YOUR_USERNAME` to see the process, the is titled `BIDS_Conversion`    
@@ -74,11 +94,9 @@ When you press "CONVERT" the terminal will output that a batch job has been subm
 squeue -u nbytes
 ```  
 
-The GUI has a few assumptions:
-- The subject folders are labeled with the prefix `sub-`, if you need to do this reference: [Rename_Folders.ipynb](ADD_LINK_HERE)  
-- The GUI assumes the dicoms are listed directly after the subject folders, therefore it assumes the structure is: /my/directory/path/is/maindir/sub-XXX/*dcm  
-- Currently the GUI grabs all subject folders found from the given input directory, it then will run a conversion on all the confirmed subjects, future updates will allow the selection of a single, or specific subjects.  
  
+ 
+
 ### Setup batch script & run 
 Here we are going to go over the batch script and setting it up.  
 Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
