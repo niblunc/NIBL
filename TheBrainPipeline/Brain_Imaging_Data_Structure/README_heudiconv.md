@@ -23,26 +23,22 @@ Log into RENCI --> Start Singularity shell --> Run commands
 
     Example: getting the dicominfo.tsv file
 
-          $ heudiconv -d Data/{subject}/{session}/Dicoms/dicoms/*/*dcm -s Eric_Data \
+          $ heudiconv -d Data/ChocolateData/{subject}/{session}/Dicoms/dicoms/*/*dcm -s sub-001 \
           -ss wave2 -f convertall.py -c none -o /output/EricData/pre-bids_files
 
-    Example: converting a single subject
+    Example: converting a single subject with the shell 
 
           $ cd /projects/niblab/bids_projects
           $ sinteractive
           $ singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/heudiconv.simg
           $ cd /test
-          $ heudiconv -d Data/{subject}/{session}/Dicoms/dicoms/*/*dcm -s Eric_Data \
-          -ss wave2 -f eric_conversion.py -c none -o output/EricData/ses-wave2
+          $ heudiconv -d Data/ChocolateData/{subject}/{session}/Dicoms/dicoms/*/*dcm -s sub-001 \
+          -ss wave2 -f eric_conversion.py -c dcm2niix -o output/EricData/ses-wave2
 
     Example: Converting all subjects
-             To convert multiple subjects we can create a simple script that loops through our subjects.
-
-
-          $ cd /projects/niblab/bids_projects
-          $ sinteractive -m 24000
-          $ singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/heudiconv.simg
-          $ cd /test
-          $ bash scripts/SugarMama_BIDS_conversion.sh
-
-Refer to, <i>SugarMama_BIDS_conversion.sh</i>, for a template and further explanation of converting multiple subjects.
+             To convert multiple subjects we can create a simple script that loops through our subjects.  
+             EXAMPLE SCRIPT WILL BE ADDED.
+           
+    Example: Use 'exec' to run conversion
+          $ sinteractive 
+          $ singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv2019.simg heudiconv -d           /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-{session}/{subject}/*dcm  -f /test/projects/niblab/bids_projects/Heuristic_Files/test_heuristic.py -c dcm2niix -o /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/test -s sub-065 -ss 1 
