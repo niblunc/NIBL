@@ -29,9 +29,33 @@ One of the specifications of BIDS is the naming scheme. While this can be meticu
   
 ### Setting up the Heuristic File  
 A great explanation is found here: [Using Heudiconv](http://nipy.org/heudiconv/#21)  
-BIDS has very specific naming structures, a summarized document is currently being created to help the team but for now please reference the specs documentation: [BIDS Specs](https://bids.neuroimaging.io/bids_spec.pdf)    
+BIDS has very specific naming structures, a summarized document is currently being created to help the team but for now please reference the specs documentation: [BIDS Specs](https://bids.neuroimaging.io/bids_spec.pdf)   
+To get the values we need to fill out the heuristic file we can run a "dry pass" on our subjects and look at the `dicominfo.tsv` file. You can run this manually and look at the file yourself or you can run the scripts from the terminal and see the output. *For now* the script will drypass all the input subjects given and then you can run the second script to view a specific subject. Often times it is best to have all the subjects because there are cases the values vary, this is rare, but it has occured and you can reference the individuals files if needed. The scripts are found here [Heudiconv_DryPass]() but you can also find them already on RENCI, no modification is needed, just follow the workflow below.  
+The two step process:
+I. Run the `get_dicominfo.py` script, this requires 3 inputs:  
+    A. The input directory that holds the subjects (right now the script runs on all found subjects, will be modified to select desired subjects only)  
+    B. The output directory (where you want the hidden .heudiconv folder to be held)
+    C. The dicom extension to be found, either IMA or dcm (will be modified to automatically find)  
+II. Run the `read_tsv.py` script, requires 2 inputs:  
+    A. The input directory, which is the same as the output directory given above.  
+    B. The subject you'd like to view   
+    
+```
+# change to the directory
+cd /projects/niblab/bids_projects/Heudiconv_drypass
+
+# run the get_dicominfo.py script
+python get_dicominfo.py -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -out /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -ext dcm
+
+# run the read_tsv.py script 
+python read_tsv.py -subj sub-031 -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test
+
+# 
+```
 For an example heuristic file reference here: [Heuristic Example](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_example.py)  
 Then you can modify the template we have here: [Heuristic File template](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_template.py)    
+
+
 
 
 ### Run the GUI  

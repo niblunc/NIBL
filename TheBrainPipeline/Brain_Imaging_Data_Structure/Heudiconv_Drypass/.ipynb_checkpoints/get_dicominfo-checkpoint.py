@@ -7,8 +7,8 @@ def set_parser():
     global parser
     global arglist
     global args
-    parser=argparse.ArgumentParser(description='bids conversion')
-    parser.add_argument('-indir',dest='INDIR',
+    parser=argparse.ArgumentParser(description='Run Heudiconv Drypass')
+    parser.add_argument('-in',dest='INDIR',
                         default=False, help='enter directory where the sub-*/ directories are found')
     parser.add_argument('-out',dest='OUT',
                         default=False, help='enter directory where you want the output to go')
@@ -42,4 +42,3 @@ print(heudiconv_cmd)
 print("STARTING RUN.....")
 run_batch=subprocess.Popen(["sbatch", "/projects/niblab/bids_projects/Heudiconv_drypass/drypass.job", heudiconv_cmd])
 
-#dicom_tsv = os.pathoutpath
