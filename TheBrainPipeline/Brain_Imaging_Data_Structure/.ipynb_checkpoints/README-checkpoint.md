@@ -77,13 +77,11 @@ The Current Inputs:
 - Multiple sessions: yes or no  
 - Session: enter the session id IF multiple sessions is yes  
 
-The GUI will be updated to:  
-- Identify "dcm" or "IMA" without input
-- Will allow you to select specific subjects
-
+**RUN THE GUI:**
 ```
 # change to the directory
 cd /projects/niblab/bids_projects/BIDS_GUI
+
 # start the GUI 
 python gui.py 
 ```  
@@ -92,18 +90,23 @@ When you press "CONVERT" the terminal will output that a batch job has been subm
 ``` 
 # when you have pressed convert you can close the GUI then type the following, replacing 'nbytes' with your username
 squeue -u nbytes
-```  
+```   
+  
+The GUI will be updated to:  
+- Identify "dcm" or "IMA" without input
+- Will allow you to select specific subjects
+- Will improve output windows when selecting inputs and running conversion
 
- 
- 
+
 
 ### Setup batch script & run 
-Here we are going to go over the batch script and setting it up.  
+If you want or need to run the batch script manually you need to set up the batch script and run manually.   
 Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
   
   
 ### Cleaning up the BIDS directory
 Reference here for the BIDS specs: [BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
+Reference here for script to "clean up" the BIDS directorty post conversion: [BIDS clean up](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/CleaningBIDS.ipynb)
 Single Session Directory Example: 
 ```
 ● sub-001/
