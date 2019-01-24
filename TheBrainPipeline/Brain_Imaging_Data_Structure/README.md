@@ -45,12 +45,11 @@ II. Run the `read_tsv.py` script, requires 2 inputs:
 cd /projects/niblab/bids_projects/Heudiconv_drypass
 
 # run the get_dicominfo.py script
-python get_dicominfo.py -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -out /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -ext dcm
+python get_dicominfo.py -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -out \ /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test -ext dcm
 
 # run the read_tsv.py script 
-python read_tsv.py -subj sub-031 -in /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test
+python read_tsv.py -subj sub-031 -in \ /projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-1/test
 
-# 
 ```
 For an example heuristic file reference here: [Heuristic Example](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_example.py)  
 Then you can modify the template we have here: [Heuristic File template](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_template.py)    
