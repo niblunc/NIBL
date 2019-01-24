@@ -41,7 +41,7 @@ Log into RENCI --> Start Singularity shell --> Run commands
            
     Example: Use 'exec' to run conversion
           $ sinteractive 
-          $ singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv2019.simg heudiconv -d \ 
-          /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-{session}/{subject}/*dcm  -f \ 
-          /test/projects/niblab/bids_projects/Heuristic_Files/test_heuristic.py -c dcm2niix -o \
-          /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/test -s sub-065 -ss 1 
+          $ singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv2019.simg \
+          heudiconv -d /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/ses-{session}/{subject}/*dcm \
+          -f /test/projects/niblab/bids_projects/Heuristic_Files/test_heuristic.py -c dcm2niix \
+          -o  /test/projects/niblab/bids_projects/raw_data/continuing_studies/BBx/test -s sub-065 -ss 1 
