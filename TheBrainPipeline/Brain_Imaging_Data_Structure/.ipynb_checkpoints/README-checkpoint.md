@@ -99,13 +99,10 @@ The GUI will be updated to:
 
 
 
-### Setup batch script & run 
-If you want or need to run the batch script manually you need to set up the batch script and run manually.   
-Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
 
 ### Run manually through terminal 
 Reference here to run heudiconv manually through terminal or test [Heudiconv Container](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/README_heudiconv.md)  
-Reference here for the batch script example and template: [Batch Example]() [Batch Template]()
+Reference here for the batch script example and template: [Batch Example](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/batch_example.job) [Batch Template](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/batch_template.job)
   
   
 ### Cleaning up the BIDS directory
