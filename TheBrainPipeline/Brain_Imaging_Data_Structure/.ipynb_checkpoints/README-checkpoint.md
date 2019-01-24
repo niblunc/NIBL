@@ -34,9 +34,9 @@ To get the values we need to fill out the heuristic file we can run a "dry pass"
 The scripts are found here [Heudiconv_DryPass](https://github.com/niblunc/NIBL/tree/master/TheBrainPipeline/Brain_Imaging_Data_Structure/Heudiconv_Drypass) but you can also find them already on RENCI, no modification is needed, just follow the workflow below.  
 The two step process:  
 I. Run the `get_dicominfo.py` script, this requires 3 inputs:  
-    * The input directory that holds the subjects (right now the script runs on all found subjects, will be modified to select desired subjects only)   
-    B. The output directory (where you want the hidden .heudiconv folder to be held)  
-    C. The dicom extension to be found, either IMA or dcm (will be modified to automatically find)   
+    - The input directory that holds the subjects (right now the script runs on all found subjects, will be modified to select desired subjects only)   
+-   The output directory (where you want the hidden .heudiconv folder to be held)  
+-   The dicom extension to be found, either IMA or dcm (will be modified to automatically find)   
 II. Run the `read_tsv.py` script, requires 2 inputs:   
     A. The input directory, which is the same as the output directory given above.  
     B. The subject you'd like to view  
