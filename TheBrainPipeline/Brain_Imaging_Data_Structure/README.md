@@ -29,8 +29,9 @@ One of the specifications of BIDS is the naming scheme. While this can be meticu
   
 ### Setting up the Heuristic File  
 A great explanation is found here: [Using Heudiconv](http://nipy.org/heudiconv/#21)  
-For an example heuristic file reference here: [Heuristic Example](ADD)
-Then you can modify the template we have here: [Heuristic File template](ADD_LINK_HERE)  
+BIDS has very specific naming structures, a summarized document is currently being created to help the team but for now please reference the specs documentation: [BIDS Specs](https://bids.neuroimaging.io/bids_spec.pdf)    
+For an example heuristic file reference here: [Heuristic Example](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_example.py)  
+Then you can modify the template we have here: [Heuristic File template](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/Brain_Imaging_Data_Structure/heuristic_template.py)    
 
 
 ### Run the GUI  
@@ -42,9 +43,17 @@ cd /projects/niblab/bids_projects/BIDS_GUI
 python BIDS_GUI.py 
 ```  
   
+When you press "CONVERT" the terminal will output that a batch job has been submitted, please use `squeue -u YOUR_USERNAME` to see the process, the is titled `BIDS_Conversion`    
+``` 
+# when you have pressed convert you can close the GUI then type the following, replacing 'nbytes' with your username
+squeue -u nbytes
+```  
+
 The GUI has a few assumptions:
 - The subject folders are labeled with the prefix `sub-`, if you need to do this reference: [Rename_Folders.ipynb](ADD_LINK_HERE)  
-
+- The GUI assumes the dicoms are listed directly after the subject folders, therefore it assumes the structure is: /my/directory/path/is/maindir/sub-XXX/*dcm  
+- Currently the GUI grabs all subject folders found from the given input directory, it then will run a conversion on all the confirmed subjects, future updates will allow the selection of a single, or specific subjects.  
+ 
 ### Setup batch script & run 
 Here we are going to go over the batch script and setting it up.  
 Reference the batch script here for reference: [Batch script](ADD_LINK_HERE)  
