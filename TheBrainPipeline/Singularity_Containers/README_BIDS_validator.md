@@ -1,6 +1,7 @@
-## BIDS Validator
+# BIDS Validator
 
 Image: bids_validator.simg
+Location: /projects/niblab/bids_projects/Singularity_Containers 
 
 ### Workflow: <br>
 Log into RENCI --> Start Singularity shell --> Validate BIDS dataset
@@ -9,7 +10,7 @@ Log into RENCI --> Start Singularity shell --> Validate BIDS dataset
           $ bids-validator {data_directory}
 
 
-Example:
+#### Example:
 
 Validate Bevel:
 ```
