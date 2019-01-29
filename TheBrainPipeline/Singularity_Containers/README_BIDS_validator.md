@@ -16,7 +16,7 @@ Validate Bevel:
 ```
 cd /projects/niblab/bids_projects
 sinteractive
-singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/bids_validator.simg
-cd /test
+# note how I append the ~/Bevel directory to our container
+singularity shell -B /projects/niblab/bids_projects/Experiments/Bevel:/test Singularity_Containers/bids_validator.simg
 bids-validator Experiments/Bevel/BIDS
 ```
