@@ -1,4 +1,4 @@
-## BIDS Converter with heudiconv
+# BIDS Converter with heudiconv
 
 Image: heudiconv.simg
 
