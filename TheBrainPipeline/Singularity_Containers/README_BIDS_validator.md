@@ -19,4 +19,10 @@ sinteractive
 # note how I append the ~/Bevel directory to our container
 singularity shell -B /projects/niblab/bids_projects/Experiments/Bevel:/test Singularity_Containers/bids_validator.simg
 bids-validator /test/BIDS
+
+# to get out of container
+exit
+# to get out of sinteractive 
+exit
+
 ```
