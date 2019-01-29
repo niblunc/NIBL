@@ -33,9 +33,9 @@ heudiconv -d raw_data/ChocolateData/{session}/{subject}/*dcm -s sub-001 sub-003 
 Example: converting a single subject with a single session
 ```
 sinteractive
-singularity shell -B /projects/niblab/bids_projects/Experiments/Bevel:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv.simg  
+singularity shell -B /projects/niblab/bids_projects:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv.simg  
 cd /test 
-heudiconv -d raw_data/{subject}/*dcm -s sub-074 -c dcm2niix -f bevel_heuristic.py -o BIDS
+heudiconv -d Experiments/Bevel/DICOM/sub-{subject}/*dcm -s 074 -c dcm2niix -f Experiments/Bevel/Nifti/code/bevel_heuristic.py -o Experiments/Bevel/Nifti
 
 ```
 Example: Converting all subjects To convert multiple subjects we can create a simple script that loops through our subjects.
