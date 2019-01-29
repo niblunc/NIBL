@@ -12,8 +12,10 @@ Log into RENCI --> Start Singularity shell --> Validate BIDS dataset
 Example:
 
 Validate Bevel:
-```cd /projects/niblab/bids_projects
+```
+cd /projects/niblab/bids_projects
 sinteractive
-          singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/bids_validator.simg
-          cd /test
-          bids-validator Experiments/Bevel/BIDS```
+singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/bids_validator.simg
+cd /test
+bids-validator Experiments/Bevel/BIDS
+```
