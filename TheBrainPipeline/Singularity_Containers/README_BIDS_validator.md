@@ -1,6 +1,6 @@
 # BIDS Validator
 
-Image: bids_validator.simg
+Image: bids_validator.simg  
 Location: /projects/niblab/bids_projects/Singularity_Containers 
 
 ### Workflow: <br>
