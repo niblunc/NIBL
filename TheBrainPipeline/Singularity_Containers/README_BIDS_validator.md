@@ -11,9 +11,9 @@ Log into RENCI --> Start Singularity shell --> Validate BIDS dataset
 
 Example:
 
-    Validate Eric Data:
-          $ cd /projects/niblab/bids_projects
-          $ sinteractive
-          $ singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/bids_validator.simg
-          $ cd /test
-          $ bids-validator Experiments/EricData/EricData/ses-wave4
+    Validate Bevel:
+          cd /projects/niblab/bids_projects
+          sinteractive
+          singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/bids_validator.simg
+          cd /test
+          bids-validator Experiments/Bevel/BIDS
