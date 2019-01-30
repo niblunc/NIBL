@@ -7,7 +7,7 @@ The `fmriprep` workflow takes as principal input the path of the dataset that is
 
 [Reference the docs](https://fmriprep.readthedocs.io/en/stable/usage.html)
 ### Command Template: <br>
-fmriprep command:
+fmriprep command: 
 ```
 fmriprep [-h] [--version] [--skip_bids_validation]
                 [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
