@@ -33,37 +33,42 @@ fmriprep [-h] [--version] [--skip_bids_validation]
                 [--notrack] [--sloppy]
                 bids_dir output_dir {participant}
 ```
+Common fmriprep command for NIBL:
+```
+fmriprep [input directory] [output directory] \
+    participant  \
+    --participant-label [participant label]  \
+    --fs-license-file /home_dir/projects/niblab/bids_projects/freesurfer/license.txt \
+    --fs-no-reconall \
+    --omp-nthreads 16 --n_cpus 16 \
+    --ignore slicetiming  \
+    --bold2t1w-dof 12 \
+    --output-space template --template MNI152NLin2009cAsym \
+    --debug \
+    --resource-monitor --write-graph --stop-on-first-crash 
+```
 
+### Examples
 
-  * Notes:\
-    -- heuristic_file: Unique file of keys we must provide that tells how the files are to be converted. \
-          We use the information from our dicominfo.txt to fill in our keys.
+Opening fmriprep:
 
+```
+```
 
-#### Examples
-
-    Example: getting the dicominfo.tsv file
-
-          $ heudiconv -d Data/{subject}/{session}/Dicoms/dicoms/*/*dcm -s Eric_Data \
-          -ss wave2 -f convertall.py -c none -o /output/EricData/pre-bids_files
-
-    Example: converting a single subject
-
-          $ cd /projects/niblab/bids_projects
-          $ sinteractive
-          $ singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/heudiconv.simg
-          $ cd /test
-          $ heudiconv -d Data/{subject}/{session}/Dicoms/dicoms/*/*dcm -s Eric_Data \
-          -ss wave2 -f eric_conversion.py -c none -o output/EricData/ses-wave2
-
-    Example: Converting all subjects
-             To convert multiple subjects we can create a simple script that loops through our subjects.
-
-
-          $ cd /projects/niblab/bids_projects
-          $ sinteractive -m 24000
-          $ singularity shell -B /projects/niblab/bids_projects:/test Singularity_Containers/heudiconv.simg
-          $ cd /test
-          $ bash scripts/SugarMama_BIDS_conversion.sh
-
-Refer to, <i>SugarMama_BIDS_conversion.sh</i>, for a template and further explanation of converting multiple subjects.
+Running with shell  
+```
+sinteractive -m 
+singularity shell -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep.simg  
+cd /home_dir 
+fmriprep /home_dir/Experiments/Bevel/Nifti /home_dir/Experiments/Bevel/test/ \
+    participant  \
+    --participant-label sub-074 sub-013 \
+    --fs-license-file /home_dir/freesurfer/license.txt \
+    --fs-no-reconall \
+    --omp-nthreads 16 --n_cpus 16 \
+    --ignore slicetiming  \
+    --bold2t1w-dof 12 \
+    --output-space template --template MNI152NLin2009cAsym \
+    --debug \
+    --resource-monitor --write-graph --stop-on-first-crash 
+```
