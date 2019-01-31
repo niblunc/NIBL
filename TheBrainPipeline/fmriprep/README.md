@@ -52,7 +52,7 @@ SDC and modifying the jsons
 The fmriprep documentation states, 'Data acquired to correct for B0 inhomogeneities can come in different forms. The current version of this standard considers four different scenarios. Please note that in all cases fieldmap data can be linked to a specific scan(s) it was acquired for by filling the IntendedFor field in the corresponding JSON file.....The IntendedFor field is optional and in case the fieldmaps do not correspond to any particular scans it does not have to be filled.'[BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
   
 We found that we need to do this to get the SDC output from fmriprep.  
-The script [fill_fmap_jsons]() is made to do this. It will take an input directory and fill in the relevant jsons. Currently it has to be given the input directory where the sub-*/ folders are held, and it will add each available functional for reference to the json. We can modify this to select only a single functional if needed. 
+The script [fill_fmap_jsons](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/fmriprep/fill_fmap_jsons.py) is made to do this. It will take an input directory and fill in the relevant jsons. Currently it has to be given the input directory where the sub-*/ folders are held, and it will add each available functional for reference to the json. We can modify this to select only a single functional if needed. 
 ```
 # change to the directory holding the script
 cd /projects/niblab/bids_projects/code
