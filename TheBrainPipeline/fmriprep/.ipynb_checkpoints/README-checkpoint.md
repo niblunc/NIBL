@@ -90,6 +90,7 @@ fmriprep /home_dir/Experiments/Bevel/Nifti /home_dir/Experiments/Bevel/test/ \
 ```
 
 Running batch processes
+[Batch File](https://github.com/niblunc/NIBL/blob/master/TheBrainPipeline/fmriprep/fmriprep_batch.job)
 ```
 # edit batch file
 # submit job
