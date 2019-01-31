@@ -7,7 +7,7 @@ The `fmriprep` workflow takes as principal input the path of the dataset that is
 
 [Reference the docs](https://fmriprep.readthedocs.io/en/stable/usage.html)
 ### Command Template: <br>
-fmriprep command: 
+fmriprep command
 ```
 fmriprep [-h] [--version] [--skip_bids_validation]
                 [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
@@ -33,7 +33,7 @@ fmriprep [-h] [--version] [--skip_bids_validation]
                 [--notrack] [--sloppy]
                 bids_dir output_dir {participant}
 ```
-Common fmriprep command for NIBL:
+Common fmriprep command for NIBL
 ```
 fmriprep [input directory] [output directory] \
     participant  \
@@ -71,7 +71,7 @@ chmod -R 775 .
 
 ### Examples
 
-Opening fmriprep:
+Opening fmriprep
 ```
 # with the shell
 singularity shell -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep.simg  
