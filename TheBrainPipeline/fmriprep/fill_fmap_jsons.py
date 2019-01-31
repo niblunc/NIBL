@@ -51,7 +51,7 @@ def run_program():
                 with open(j, 'w') as f:
                     json.dump(data, f, indent=2)
             except:
-                print("CANT EDIT FILE ", j)
+                print("CANT EDIT FILE -- check permissions on folders ", j)
         
 
 def main():
