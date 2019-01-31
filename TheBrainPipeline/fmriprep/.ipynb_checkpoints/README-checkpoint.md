@@ -48,7 +48,7 @@ fmriprep [input directory] [output directory] \
     --resource-monitor --write-graph --stop-on-first-crash 
 ```
 
-SDC and modifying the jsons  
+#### SDC and modifying the jsons 
 The fmriprep documentation states, 'Data acquired to correct for B0 inhomogeneities can come in different forms. The current version of this standard considers four different scenarios. Please note that in all cases fieldmap data can be linked to a specific scan(s) it was acquired for by filling the IntendedFor field in the corresponding JSON file.....The IntendedFor field is optional and in case the fieldmaps do not correspond to any particular scans it does not have to be filled.'[BIDS](https://bids.neuroimaging.io/bids_spec.pdf)  
   
 We found that we need to do this to get the SDC output from fmriprep.  
