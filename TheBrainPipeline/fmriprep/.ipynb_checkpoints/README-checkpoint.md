@@ -38,7 +38,7 @@ Common fmriprep command for NIBL:
 fmriprep [input directory] [output directory] \
     participant  \
     --participant-label [participant label]  \
-    --fs-license-file /home_dir/projects/niblab/bids_projects/freesurfer/license.txt \
+    --fs-license-file /home_dir/freesurfer/license.txt \
     --fs-no-reconall \
     --omp-nthreads 16 --n_cpus 16 \
     --ignore slicetiming  \
@@ -51,18 +51,15 @@ fmriprep [input directory] [output directory] \
 ### Examples
 
 Opening fmriprep:
-
 ```
-```
-
-Running with shell  
-```
-sinteractive -m 
+# with the shell
 singularity shell -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep.simg  
-cd /home_dir 
-fmriprep /home_dir/Experiments/Bevel/Nifti /home_dir/Experiments/Bevel/test/ \
+
+# with exec
+singularity exec -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep.simg \
+fmriprep [input directory] [output directory] \
     participant  \
-    --participant-label sub-074 sub-013 \
+    --participant-label [participant label]  \
     --fs-license-file /home_dir/freesurfer/license.txt \
     --fs-no-reconall \
     --omp-nthreads 16 --n_cpus 16 \
@@ -71,4 +68,30 @@ fmriprep /home_dir/Experiments/Bevel/Nifti /home_dir/Experiments/Bevel/test/ \
     --output-space template --template MNI152NLin2009cAsym \
     --debug \
     --resource-monitor --write-graph --stop-on-first-crash 
+
+```
+
+Running with shell  
+```
+sinteractive -m 99000
+singularity shell -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep.simg  
+cd /home_dir 
+fmriprep /home_dir/Experiments/Bevel/Nifti /home_dir/Experiments/Bevel/test/ \
+    participant  \
+    --participant-label 001 \
+    --fs-license-file /home_dir/freesurfer/license.txt \
+    --fs-no-reconall \
+    --omp-nthreads 16 --n_cpus 16 \
+    --ignore slicetiming  \
+    --bold2t1w-dof 12 \
+    --output-space template --template MNI152NLin2009cAsym \
+    --debug \
+    --resource-monitor --write-graph --stop-on-first-crash 
+```
+
+Running batch processes
+```
+# edit batch file
+# submit job
+sbatch --array=1-10%10 fmriprep_batch.job
 ```
