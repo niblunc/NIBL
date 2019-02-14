@@ -10,13 +10,13 @@ The current workflow is below:
   
   
 #### Note:
-* this is subject to change, and is made to be as flexible and essential as possible.  
-* these scripts assume you have fmriprep data and follow the derivatives/ directory setup  
+* this workflow and the scripts are subject to change, and are made to be as flexible and essential as possible.  
+* these scripts assume you have fmriprep data and follow the `derivatives`/ directory setup  
 
-### Directory template derivatives/ 
-Here is the derivatives/ directory that we set up for our essential data. 
+### Directory template ~/derivatives/ 
+Here is the ~/derivatives/ directory that we set up for our essential data. 
 ```
-    .../derivatives/
+    ~/derivatives/
         code/
             heuristic_file.py
         design_files/
