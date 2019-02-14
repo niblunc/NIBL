@@ -2,7 +2,7 @@
 
 ### Workflow:  
 The current workflow is below:   
-* Setting up derivatives directory 
+* Setting up the derivatives/ directory 
 * Skull stripping functionals (running -bet) 
 * Motion correction (FD Check)
 * Collecting motion parameters 

@@ -62,6 +62,8 @@ def set_parser():
                         default=False, help="enter the input directory path where the subject ids,  'sub-*', are held(may be the same as fmriprep/derivatives/etc)" )
     parser.add_argument('-ses',dest='SES',
                         default=False, help='have multiple sessions use flag?')
+    parser.add_argument('-bet_thresh',dest='BET_THRESH',
+                        default=False, help='fractional intensity threshold (0->1)')
 
 
     args = parser.parse_args()
@@ -85,10 +87,11 @@ def skull_strip(sub):
                 print(bet_output + ' exists, skipping \n')
             else:
                 print("Running bet on ", nifti)
-                bet_cmd=("bet %s %s -F -m -f 0.63"%(nifti, bet_output))
+                bet_cmd=("bet %s %s -F -m -f %s"%(nifti, bet_output, arglist["BET_THRESH"]))
                 print(">>>-----> BET COMMAND:", bet_cmd)
                 shutil.copy(nifti, func_output_path)
                 os.system(bet_cmd)
+    # If cannot find file move on
     except FileNotFoundError:
         print("BAD FILE PASSING")
         outfile = os.path.join(derivatives_dir, 'empty_subjects_betstrip.txt')
@@ -102,12 +105,13 @@ def fd_check(sub):
 # iterate over nifti file
         for nifti in glob.glob(os.path.join(func_output_path, '*brain.nii.gz')):
             filename=nifti.split('.')[0]
-            file = filename.split("/")[-1]
-            #need to get identifier for tasks and runs --rn for bevel, need to specify for versatility 
-            if "run" in file:
-                run_id = file.split("_")[2]
-            else:
-                run_id = "rest"
+            newfilename = filename.split("/")[-1].replace("_bold_space-MNI152NLin2009cAsym_preproc_brain", " ")
+
+            
+
+            #### PUT IN CORRECT FILENAME IDENTIFIER HERE!!!
+            
+               
             print("RUN ID >>>>>>>>>--------> ", run_id)
             # set comparison param
             nvols_cmd="fslnvols " + nifti
@@ -115,13 +119,13 @@ def fd_check(sub):
             volume = volume.strip()
             comparator = int(volume) *.25
             ## RUN 'fsl_motion_outliers' TO RETRIEVE MOTION CORRECTION ANALYSIS
-            outlier_cmd = "fsl_motion_outliers -i %s  -o %s/%s_confound.txt  --fd --thresh=0.9 -p %s/%s_fd_plot -v > %s/%s_outlier_output.txt"%(filename, motion_assessment_path, file, motion_assessment_path,run_id, motion_assessment_path, file)
+            outlier_cmd = "fsl_motion_outliers -i %s  -o %s/%s_confound.txt  --fd --thresh=0.9 -p %s/%s_fd_plot -v > %s/%s_outlier_output.txt"%(filename, motion_assessment_path, newfilename, motion_assessment_path,newfilename, motion_assessment_path, newfilename)
             print(">>>>>>>>>-------->  RUNNING FSL MOTION OUTLIERS ")
             print("COMMAND NVOLS: ", nvols_cmd)
             print("OUTLIER CMD: ", outlier_cmd)
             os.system(outlier_cmd)
         ## EXAMINE OUTLIER FILE AND GRAB RELEVANT DATA 
-            outlier_file="%s/%s_outlier_output.txt"%(motion_assessment_path, file)
+            outlier_file="%s/%s_outlier_output.txt"%(motion_assessment_path, newfilename)
             with open(outlier_file, 'r') as f:
                 lines=f.readlines()
                 statsA = lines[1].strip("\n") #maskmean
@@ -254,8 +258,7 @@ def main():
     pool = Pool(processes=2)
     pool.map(start_process, [B,C])
 
-#________________________________________________________________________________________
-
+                         
 # Start Program
 if __name__ == "__main__":
     main()
