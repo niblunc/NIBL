@@ -3,5 +3,6 @@
 ### Typical Workflow  
 * [BIDS]()
 * [FMRIPREP]()  
-* Additional [preprocessing]()
+* Additional preprocessing:
+** Motion Correction (FD_Check) 
 
