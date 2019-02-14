@@ -1,7 +1,7 @@
 # Preprocessing fMRI data  
   
 ### Typical Workflow  
-* I.   [BIDS]()
+*I.   [BIDS]()
 * II.  [FMRIPREP]()  
 * III. Additional [preprocessing]()
 
