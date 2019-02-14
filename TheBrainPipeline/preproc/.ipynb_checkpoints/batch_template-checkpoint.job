@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+#SBATCH --job-name=BIDS_CONVERSION
+#SBATCH -N 1
+#SBATCH -c 1
+#SBATCH -t 2:00:00
+#SBATCH -o /directory/for/my/output/file/BIDS_out.txt
+#SBATCH -e /directory/for/my/error/file/BIDS_err.txt
+
+
+
+singularity exec -B /:/test /projects/niblab/bids_projects/Singularity_Containers/heudiconv.simg heudiconv \
+-b -d DICOM_INPUT_DIRECTORY_HERE \
+-s SUBJECT[SUBJECTS] \
+-ss SESSION \
+-f HEURISTIC_FILE_HERE \
+-c dcm2niix -o OUTPUT_DIRECTORY_HERE
