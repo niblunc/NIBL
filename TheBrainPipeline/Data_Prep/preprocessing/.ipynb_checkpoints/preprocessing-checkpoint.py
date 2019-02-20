@@ -15,7 +15,6 @@ import shutil
 
 
 
-
 #________________________________________________________________________________________
 # This method, check_output_directories(sub), checks the ~/derivatives directory
 # and will make relevant directories if we need to {anat/, func/, motion_assesment/ Analysis/},
@@ -44,72 +43,6 @@ def check_output_directories(sub):
 
 
 
-#________________________________________________________________________________________
-# The set_paths(sub) method assigns variables for our directory paths.
-# [input (BIDS), output(anat, func, motion_assesment)]
-# It takes the subject ID as an argument, and **it is called from get_subjects()
-#________________________________________________________________________________________
-
-def set_paths(sub):
-    global func_output_path
-    global anat_output_path
-    global func_input_path
-    global motion_assessment_path
-
-    if arglist["SES"] == False:
-        out_dir = os.path.join(derivatives_dir, sub)
-        func_input_path=os.path.join(input_dir,sub, "func")
-    else:
-        out_dir = os.path.join(derivatives_dir, sub, arglist["SES"])
-        func_input_path=os.path.join(input_dir,sub,arglist["SES"], "func")
-    
-    anat_output_path=os.path.join(out_dir, 'anat')
-    func_output_path=os.path.join(out_dir,'func')
-    motion_assessment_path=os.path.join(out_dir,'func','motion_assessment')
-
-#________________________________________________________________________________________
-# The get_subjects() method gets an input directory, the BIDS path, we ask for the "top level"
-# BIDS directory, where the subjects are listed, ~/STUDYNAME.
-# For the output directory we ask for you to provide the location where you would like
-# your derivatives directory to be, or the path to its location, however do not include
-# the derivatives directory.
-#________________________________________________________________________________________
-
-
-def get_subjects():
-
-    # Get data from input
-    sub_dir=glob.glob(os.path.join(input_dir, 'sub-*'))
-    for path in sub_dir:
-        sub = path.split("/")[-1]
-        subjects.append(sub)
-
-
-
-
-#________________________________________________________________________________________
-# The write_files() method sets the file paths for output files
-#________________________________________________________________________________________
-
-def output_files():
-    global datestamp
-    global outhtml
-    global out_bad_bold_list
-    global outfile
-
-    datestamp=datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
-
-    if arglist["SES"] == False:
-        outhtml = os.path.join(derivatives_dir,'bold_motion_QA_%s.html'%(datestamp))
-        out_bad_bold_list = os.path.join(derivatives_dir,'TEST_%s.txt'%(datestamp))
-    else:
-        outhtml = os.path.join(derivatives_dir,'%s_bold_motion_QA_%s.html'%(arglist["SES"],datestamp))
-        out_bad_bold_list = os.path.join(derivatives_dir,'%s_TEST_%s.txt'%(arglist["SES"], datestamp))
-    if arglist["MOCO"] != False:
-        outfile = open(outhtml, 'a')
-
-
-
 
 def set_parser():
     global parser
@@ -120,9 +53,9 @@ def set_parser():
     parser.add_argument('-fprepdir',dest='FPREP',
                         default=False, help='enter path for fmriprep/ directory')
     parser.add_argument('-moco',dest='MOCO',
-                        action="store_true", help='this is using fsl_motion_outliers to preform motion correction and generate a confounds.txt as well as DVARS')
-    parser.add_argument('-bet',dest='STRIP',action='store_true',
-                        default=False, help='bet via fsl using defaults for functional images')
+                        default=False, help='this is using fsl_motion_outliers to preform motion correction and generate a confounds.txt as well as DVARS, pass in threshold variable, 0.9 is common')
+    parser.add_argument('-bet',dest='STRIP',
+                        default=False, help='bet via fsl using defaults for functional images, pass in strip variable for fractional intensity')
     parser.add_argument('-ses',dest='SES',
                         default=False, help='have multiple sessions?')
     parser.add_argument('-derivdir',dest='DERIV',
@@ -133,13 +66,12 @@ def set_parser():
         arglist[a[0]]=a[1]
 
 
-def skull_strip(sub):
-    print(">>>>----------------> starting bet on ", sub )
+def skull_strip(sub, func_input_path, func_output_path):
+    print(">>>>---> starting bet on ", sub )
     try:
-        for nifti in glob.glob(os.path.join(func_input_path, '*bold_space-MNI152NLin2009cAsym_preproc.nii*')):
+        for nifti in glob.glob(os.path.join(func_input_path, '*_preproc.nii*')):
             # make our variables
             filename = nifti.split("/")[-1].split(".")[0]
-            print("FILENAME ", filename)
             bet_name=filename+'_brain'
             # check if data exists already
             bet_output = os.path.join(func_output_path, bet_name)
@@ -147,22 +79,27 @@ def skull_strip(sub):
                 print(bet_output + ' exists, skipping \n')
             else:
                 print("Running bet on ", nifti)
-                bet_cmd=("bet %s %s -F -m -f 0.63"%(nifti, bet_output))
+                bet_cmd=("bet %s %s -F -m -f %s"%(nifti, bet_output, arglist["STRIP"]))
                 print(">>>-----> BET COMMAND:", bet_cmd)
                 #shutil.copy(nifti, func_output_path)
                 os.system(bet_cmd)
     except FileNotFoundError:
-        print("BAD FILE PASSING")
-        out_ = os.path.join(derivatives_dir, 'empty_subjects_betstrip.txt')
-        with open(out_, 'a') as f:
-            f.write("Empty: %s \n "%(sub))
-        f.close()
+        pass 
+        #print("BAD FILE PASSING")
+        #out_ = os.path.join(derivatives_dir, 'empty_subjects_betstrip.txt')
+        #with open(out_, 'a') as f:
+         #   f.write("Empty: %s \n "%(sub))
+        #f.close()
+        
+        
+        
+        
 
-def fd_check(sub):
-    print("---------> Starting motion correction on ", sub)
+def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivatives_dir, func_output_path):
+    print(">>>>---> Starting motion correction on ", sub)
     try:
 # iterate over nifti file
-        for nifti in glob.glob(os.path.join(func_output_path, '*brain.nii.gz')):
+        for nifti in glob.glob(os.path.join(func_output_path, '*_brain.nii.gz')):
             filename=nifti.split('.')[0]
             file = filename.split("/")[-1]
             new_filename = file.split("_bold_")[0]
@@ -176,14 +113,13 @@ def fd_check(sub):
             volume = volume.strip()
             comparator = int(volume) *.25
             ## RUN 'fsl_motion_outliers' TO RETRIEVE MOTION CORRECTION ANALYSIS
-            outlier_cmd = "fsl_motion_outliers -i %s  -o %s --fd --thresh=0.9 -p %s -v > %s"%(filename, confound_path, plot_path, outlier_path)
-            print(">>>>>>>>>-------->  RUNNING FSL MOTION OUTLIERS ")
+            outlier_cmd = "fsl_motion_outliers -i %s  -o %s --fd --thresh=%s -p %s -v > %s"%(filename, confound_path, arglist["MOCO"], plot_path, outlier_path)
+            print(">>-->  RUNNING FSL MOTION OUTLIERS ")
             print("COMMAND NVOLS: ", nvols_cmd)
             print("OUTLIER CMD: ", outlier_cmd)
             os.system(outlier_cmd)
         ## EXAMINE OUTLIER FILE AND GRAB RELEVANT DATA 
-            outlier_file="%s/%s_outlier_output.txt"%(motion_assessment_path, file)
-            with open(outlier_file, 'r') as f:
+            with open(outlier_path, 'r') as f:
                 lines=f.readlines()
                 statsA = lines[1].strip("\n") #maskmean
                 statsB = lines[3].strip("\n") #metric range
@@ -194,8 +130,8 @@ def fd_check(sub):
                     statsD = "\n"
             f.close()
         ## GRAB MOTION CORRECTION PLOT AND WRITE PLOT & INFO TO HTML
-            plotz=plot_path
-            FILEINFO="""<p><font size=7> <b>{CURR_FILENAME} </b></font><br>"""
+            plotz=plot_path+".png"
+            FILEINFO="""<p><font size=6> <b>{CURR_FILENAME} </b></font><br>"""
             CURR_FILEINFO = FILEINFO.format(CURR_FILENAME=file)
             outfile.write(CURR_FILEINFO)
             INFO="""<p><font size=6>{A} <br><b>{B}<b><br>{C}<br><b>{D}</b><br><br>"""
@@ -204,12 +140,11 @@ def fd_check(sub):
             PLOT="""<IMG SRC=\"{PLOTPATH}\" WIDTH=100%><br><br>"""
             CURR_PLOT = PLOT.format(PLOTPATH=plotz)
             outfile.write(CURR_PLOT)
-            print(">>>>>>>>>--------> COPYING OUTPUT TO HTML")
-            print(">>>>>>>>>--------> ADDING PLOT TO HTML")
+            print(">>>>----> ADDING PLOT TO HTML")
                 ## ADD FILE FOR GOOD SUBJECT 
         # --sometimes you have a great subject who didn't move
             if os.path.isfile(confound_path)==False:
-                os.system(confound_path)
+                os.system("touch %s"%confound_path)
         ## CHECK FOR BAD SUBJECTS: ABOVE OUR THRESHOLD
         # how many columns are there = how many 'bad' points
             check = subprocess.check_output("grep -o 1 %s | wc -l"%(confound_path), shell=True)
@@ -224,39 +159,72 @@ def fd_check(sub):
         print("FILE IS EMPTY, PASSING")
 
 
-def start_process(subjects):
-    for sub in sorted(subjects):
-        set_paths(sub)
-        if args.STRIP == True:
-            skull_strip(sub)
-        if args.MOCO == True:
-            fd_check(sub)
+        
+        
+        
 
-def split_list(a_list):
-    half = int(len(a_list)/2)
-    return a_list[:half], a_list[half:]
-
-def main():
-    global input_dir
-    global derivatives_dir
-    global subjects
     
-    set_parser()
-    input_dir = arglist["FPREP"]
+def main(SUB_IDS):
+    fmriprep_dir = arglist["FPREP"]
     derivatives_dir = arglist["DERIV"]
+    datestamp=datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
+
+    # Check if it is a multi-sess study for correct path assignment 
+    if arglist["SES"] == False:
+        outhtml = os.path.join(derivatives_dir,'bold_motion_QA_%s.html'%(datestamp))
+        out_bad_bold_list = os.path.join(derivatives_dir,'TEST_%s.txt'%(datestamp))
+    else:
+        outhtml = os.path.join(derivatives_dir,'%s_bold_motion_QA_%s.html'%(arglist["SES"],datestamp))
+        out_bad_bold_list = os.path.join(derivatives_dir,'%s_TEST_%s.txt'%(arglist["SES"], datestamp))
+        
+    if args.MOCO != False:
+        # if motion correction parameter was given, open the HTML
+        outfile = open(outhtml, 'a')
+        TITLE="""<p><font size=7> <b> Motion Correction Check</b></font><br>"""
+        outfile.write("%s"%TITLE)
+    for sub in sorted(SUB_IDS):
+        if arglist["SES"] == False:
+            out_dir = os.path.join(derivatives_dir, sub)
+            func_input_path=os.path.join(fmriprep_dir,sub, "func")
+        else:
+            out_dir = os.path.join(derivatives_dir, sub, arglist["SES"])
+            func_input_path=os.path.join(fmriprep,sub,arglist["SES"], "func")
     
-    output_files()
+        anat_output_path=os.path.join(out_dir, 'anat')
+        func_output_path=os.path.join(out_dir,'func')
+        motion_assessment_path=os.path.join(out_dir,'func','motion_assessment')
+        
+        if args.STRIP != False:
+            skull_strip(sub, func_input_path, func_output_path)
+        if args.MOCO != False:
+            fd_check(sub,  outfile, motion_assessment_path, out_bad_bold_list, derivatives_dir, func_output_path)
+
+    outfile.close()
+
+    
+    
+    
+
+                 
+                 
 
 
-    # right now we get subjects from the DERIV PATH -- make this flexible
-    subjects = glob.glob(os.path.join(derivatives_dir, "sub-*"))
-    
-    #get_subjects()
-    B, C = split_list(subjects)
-    pool = Pool(processes=2)
-    pool.map(start_process, [B,C])
 
 
 # Start Program
 if __name__ == "__main__":
-    main()
+    global subjects
+    subjects = []
+    set_parser()
+    #get subjects
+    subs_dir = glob.glob(os.path.join(arglist["DERIV"], "sub-*"))
+
+    for x in subs_dir:
+        sub_id = x.split("/")[-1]
+        subjects.append(sub_id)
+    subjects = sorted(subjects)
+    
+    half = int(len(subjects)/2)
+    B,C = subjects[:half], subjects[half:]
+    pool = Pool(processes=2)
+    pool.map(main, [B,C])
