@@ -35,6 +35,8 @@ def set_paths():
     deriv_path=os.path.join(basedir, "derivatives")
     subjects = glob.glob("/projects/niblab/bids_projects/Experiments/bbx/fmriprep/sub-*")
     print(subjects)
+    
+    
     """subjects=[]
     os.chdir(deriv_path)
     listOfSubjects = os.listdir('.')

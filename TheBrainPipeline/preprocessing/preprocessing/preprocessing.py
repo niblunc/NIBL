@@ -7,6 +7,7 @@ Created on Thu May 31 20:38:28 2018
 """
 from multiprocessing import Pool
 import glob
+import pandas as pd
 import argparse
 import os
 import subprocess
@@ -58,6 +59,8 @@ def set_parser():
                         default=False, help='bet via fsl using defaults for functional images, pass in strip variable for fractional intensity')
     parser.add_argument('-ses',dest='SES',
                         default=False, help='have multiple sessions?')
+    parser.add_argument('-motion',dest='MOTION', action="store_true",
+                        default=False, help='output 1 column motion parameter text files')
     parser.add_argument('-derivdir',dest='DERIV',
                         default=False, help='enter path for fmriprep/ directory')
     args = parser.parse_args()
@@ -159,17 +162,62 @@ def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivative
         print("FILE IS EMPTY, PASSING")
 
 
-        
-        
+def write_files(filename, moco_df, outputdir):
+    # iterate through the motion correction data frame by columns, writing individual columns to individual files
+    for col in moco_df.columns:
+        file= "%s_%s.txt"%(filename, col)
+        output_path=os.path.join(outputdir, file)
+        print("Writing to file, ", output_path)
+        moco_df[col].to_csv(output_path, header=False, index=False)
+
+
+
+def get_motion_parameters(sub, fmriprep_path, motion_assessment_path, func_input_path):
+    errors = []
+    try:
+        print("--------------> GETTING MOCOS FOR SUBJECT: ", sub)
+        outputdir = os.path.join(motion_assessment_path, "motion_parameters")
+        if not os.path.exists(os.path.join(outputdir, 'motion_parameters')):
+            os.makedirs(os.path.join(outputdir, 'motion_parameters'))
+        print(">>>>>>>FILEPATH: %s >>>>>>>>OUTPUT DIRECTORY: %s"%(func_input_path, outputdir))
+        #os.chdir(filepath)
+        confounds = glob.glob(os.path.join(func_input_path, "*confounds.tsv"))
+        for run in confounds:
+            print("-------> GRABBING NEW FILE:")
+            print("FILE: ", run)
+            df = pd.read_table(run)
+            moco_df=df[['X', 'Y', 'Z', 'RotX', 'RotY', 'RotZ']]
+            moco_df.columns = ['moco0', 'moco1', 'moco2', 'moco3', 'moco4', 'moco5']
+            print("DATAFRAME: \n ", moco_df.head())
+            filename = run.split('/')[-1].split("_bold_confounds")[0]
+            print("FILENAME:", filename)
+            write_files(filename, moco_df, outputdir)
+            #print("RUN: ", run)
+    except FileNotFoundError as not_found:
+        print("********************FILE NOT FOUND: ", not_found.filename)
+        if sub not in errors:
+            errors.append(sub)
+        #print("ERRORS ", errors)
+        #print("ERRORS SORTED ", sorted(errors))
+    errors = sorted(errors)
+    for err in errors:
+        #print("ERROR" + err)
+        file = basedir+"/error_files_moco.txt"
+        with open(file, 'a') as f:
+            f.write("----------> FILE NOT FOUND FOR SUBJECT: " + err  + "\n")
+            f.close()
+            
+            
         
 
     
 def main(SUB_IDS):
+    # SET PATHS 
     fmriprep_dir = arglist["FPREP"]
     derivatives_dir = arglist["DERIV"]
     datestamp=datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
 
-        # Check if it is a multi-sess study for correct path assignment 
+    # CASE CHECK FOR MULTIPLE-SESS 
     if arglist["SES"] == False:
         outhtml = os.path.join(derivatives_dir,'bold_motion_QA_%s.html'%(datestamp))
         out_bad_bold_list = os.path.join(derivatives_dir,'TEST_%s.txt'%(datestamp))
@@ -177,12 +225,13 @@ def main(SUB_IDS):
         outhtml = os.path.join(derivatives_dir,'%s_bold_motion_QA_%s.html'%(arglist["SES"],datestamp))
         out_bad_bold_list = os.path.join(derivatives_dir,'%s_TEST_%s.txt'%(arglist["SES"], datestamp))
         
+    # OPEN HTML FILE IF CASE TRUE
     if args.MOCO != False:
-        # if motion correction parameter was given, open the HTML
         outfile = open(outhtml, 'a')
         TITLE="""<p><font size=7> <b> Motion Correction Check</b></font><br>"""
         outfile.write("%s"%TITLE)
-
+        
+    # ITERATE THROUGH SUBJECTS AND PERFORM INDIVIDUAL BASED OPERATIONS
     for sub in sorted(SUB_IDS):
         if arglist["SES"] == False:
             out_dir = os.path.join(derivatives_dir, sub)
@@ -199,8 +248,11 @@ def main(SUB_IDS):
             skull_strip(sub, func_input_path, func_output_path)
         if args.MOCO != False:
             fd_check(sub,  outfile, motion_assessment_path, out_bad_bold_list, derivatives_dir, func_output_path)
-
-    outfile.close()
+        if args.MOTION == True:
+            get_motion_parameters(sub, fmriprep_dir, motion_assessment_path, func_input_path)
+            
+    if args.MOCO != False:
+        outfile.close()
 
     
     
@@ -219,16 +271,13 @@ if __name__ == "__main__":
     set_parser()
     #get subjects
     subs_dir = glob.glob(os.path.join(arglist["DERIV"], "sub-*"))
+    
 
     for x in subs_dir:
         sub_id = x.split("/")[-1]
         subjects.append(sub_id)
     subjects = sorted(subjects)
     
-
-
-        
-        
     half = int(len(subjects)/2)
     B,C = subjects[:half], subjects[half:]
     pool = Pool(processes=2)
