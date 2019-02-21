@@ -169,7 +169,7 @@ def main(SUB_IDS):
     derivatives_dir = arglist["DERIV"]
     datestamp=datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
 
-    # Check if it is a multi-sess study for correct path assignment 
+        # Check if it is a multi-sess study for correct path assignment 
     if arglist["SES"] == False:
         outhtml = os.path.join(derivatives_dir,'bold_motion_QA_%s.html'%(datestamp))
         out_bad_bold_list = os.path.join(derivatives_dir,'TEST_%s.txt'%(datestamp))
@@ -182,6 +182,7 @@ def main(SUB_IDS):
         outfile = open(outhtml, 'a')
         TITLE="""<p><font size=7> <b> Motion Correction Check</b></font><br>"""
         outfile.write("%s"%TITLE)
+
     for sub in sorted(SUB_IDS):
         if arglist["SES"] == False:
             out_dir = os.path.join(derivatives_dir, sub)
@@ -224,6 +225,10 @@ if __name__ == "__main__":
         subjects.append(sub_id)
     subjects = sorted(subjects)
     
+
+
+        
+        
     half = int(len(subjects)/2)
     B,C = subjects[:half], subjects[half:]
     pool = Pool(processes=2)
