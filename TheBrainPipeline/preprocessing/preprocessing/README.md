@@ -13,6 +13,25 @@ The current workflow is below:
 * this workflow and the scripts are subject to change, and are made to be as flexible and essential as possible.  
 * these scripts assume you have fmriprep data and follow the `derivatives`/ directory setup  
 
+### Preprocessing script  
+```
+python preprocessing.py --help
+
+preprocessing
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -fprepdir FPREP  enter path for fmriprep/ directory
+  -moco MOCO       this is using fsl_motion_outliers to preform motion
+                   correction and generate a confounds.txt as well as DVARS,
+                   pass in threshold variable, 0.9 is common
+  -bet STRIP       bet via fsl using defaults for functional images, pass in
+                   strip variable for fractional intensity
+  -ses SES         have multiple sessions?
+  -motion          output 1 column motion parameter text files
+  -derivdir DERIV  enter path for fmriprep/ directory
+```
+
 ### Directory template ~/derivatives/ 
 Here is the ~/derivatives/ directory that we set up for our essential data. 
 ```
