@@ -97,7 +97,7 @@ Running with shell
 sinteractive -m 99000
 singularity shell -B /projects/niblab/bids_projects:/home_dir /projects/niblab/bids_projects/Singularity_Containers/fmriprep_5_2019.simg  
 cd /home_dir 
-fmriprep /home_dir/Experiments/Bevel/BIDS /home_dir/Experiments/Bevel/test/ \
+fmriprep /home_dir/Experiments/Bevel/BIDS /home_dir/Experiments/Bevel/test \
     participant  \
     --participant-label 001 \
     --fs-license-file /home_dir/freesurfer/license.txt \
@@ -106,7 +106,7 @@ fmriprep /home_dir/Experiments/Bevel/BIDS /home_dir/Experiments/Bevel/test/ \
     --ignore slicetiming  \
     --bold2t1w-dof 12 \
     --output-spaces MNI152Lin \
-    --debug \
+    -w /home_dir/Experiments/Bevel/test \
     --resource-monitor --write-graph --stop-on-first-crash 
 ```
 
