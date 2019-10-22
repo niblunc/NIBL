@@ -1,10 +1,12 @@
+
 #!/usr/bin/env
 # -*- coding: utf-8 -*-
 """
 Created on Thu May 31 20:38:28 2018
 
-@author: nikkibytes, extending from original by Dr. Grace Shearrer
+@author: nikkibytes
 """
+
 from multiprocessing import Pool
 import glob
 import pandas as pd
@@ -16,30 +18,6 @@ import shutil
 
 
 
-#________________________________________________________________________________________
-# This method, check_output_directories(sub), checks the ~/derivatives directory
-# and will make relevant directories if we need to {anat/, func/, motion_assesment/ Analysis/},
-# as an argument it takes the subject ID.
-#________________________________________________________________________________________
-
-def check_output_directories(sub):
-    # check for motion_assesment directory
-
-    if not os.path.exists(os.path.join(derivatives_dir, sub)):
-        os.makedirs(os.path.join(derivatives_dir, sub))
-
-    if arglist["SES"] != False:
-        if not os.path.exists(os.path.join(derivatives_dir, sub, arglist["SES"])):
-            os.makedirs(os.path.join(derivatives_dir, sub, arglist["SES"]))
-
-    if not os.path.exists(os.path.join(anat_output_path)):
-        os.makedirs(os.path.join(anat_output_path))
-    if not os.path.exists(os.path.join(func_output_path)):
-        os.makedirs(os.path.join(func_output_path))
-    if not os.path.exists(os.path.join(func_output_path,'motion_assessment')):
-        os.makedirs(os.path.join(func_output_path,  'motion_assessment'))
-    if not os.path.exists(os.path.join(func_output_path,'Analysis')):
-        os.makedirs(os.path.join(func_output_path,  'Analysis'))
 
 
 
@@ -51,8 +29,7 @@ def set_parser():
     global args
     parser=argparse.ArgumentParser(description='preprocessing')
     #parser.add_argument('-task',dest='TASK', default=False, help='which task are we running on?')
-    parser.add_argument('-fprepdir',dest='FPREP',
-                        default=False, help='enter path for fmriprep/ directory')
+
     parser.add_argument('-moco',dest='MOCO',
                         default=False, help='this is using fsl_motion_outliers to preform motion correction and generate a confounds.txt as well as DVARS, pass in threshold variable, 0.9 is common')
     parser.add_argument('-bet',dest='STRIP',
@@ -61,19 +38,76 @@ def set_parser():
                         default=False, help='have multiple sessions?')
     parser.add_argument('-motion',dest='MOTION', action="store_true",
                         default=False, help='output 1 column motion parameter text files')
-    parser.add_argument('-derivdir',dest='DERIV',
-                        default=False, help='enter path for fmriprep/ directory')
+    parser.add_argument('-bids',dest='BIDS',
+                        default=False, help='enter path for bids/ directory')
+    parser.add_argument('-anat',dest='ANAT', default=False, action='store_true',
+                        help='add flag if you want to move the anatomical image into the derivatives folder from fmriprep')
+    parser.add_argument('-dir',dest='DIR', default=False, action='store_true',
+                        help='add flag if you want to make the output directories')
     args = parser.parse_args()
     arglist={}
     for a in args._get_kwargs():
         arglist[a[0]]=a[1]
 
+#________________________________________________________________________________________
+# This method, check_output_directories(sub), checks the ~/derivatives directory
+# and will make relevant directories if we need to {anat/, func/, motion_assesment/ Analysis/},
+# as an argument it takes the subject ID.
+#________________________________________________________________________________________
+
+def check_output_directories(sub,derivatives_dir, anat_output_path, func_output_path):
+    # check for motion_assesment directory
+
+    if not os.path.exists(os.path.join(derivatives_dir, sub)):
+        os.makedirs(os.path.join(derivatives_dir, sub))
+
+    ## Use this code if we divide subject directories by sessions
+    #if arglist["SES"] != False:
+        #if not os.path.exists(os.path.join(derivatives_dir, sub, arglist["SES"])):
+            #os.makedirs(os.path.join(derivatives_dir, sub, arglist["SES"]))
+
+    if not os.path.exists(os.path.join(anat_output_path)):
+        os.makedirs(os.path.join(anat_output_path))
+    if not os.path.exists(os.path.join(func_output_path)):
+        os.makedirs(os.path.join(func_output_path))
+    if not os.path.exists(os.path.join(func_output_path,'motion_assessment')):
+        os.makedirs(os.path.join(func_output_path,  'motion_assessment'))
+    if not os.path.exists(os.path.join(func_output_path,'Analysis')):
+        os.makedirs(os.path.join(func_output_path,  'Analysis'))
+
+
+def move_anat(sub, anat_fmri_path, anat_output_path):
+    if not os.path.exists(os.path.join(anat_output_path)):
+        os.makedirs(os.path.join(anat_output_path))
+    t1w_file = os.path.join(anat_fmri_path, "{}_desc-preproc_T1w.nii.gz".format(sub))
+    t1w_desc_file = os.path.join(anat_fmri_path, "{}_space-MNI152NLin2009cAsym_desc-preproc_T1w.nii.gz".format(sub))
+    try:
+        shutil.copy2(t1w_file, anat_output_path)
+        shutil.copy2(t1w_desc_file, anat_output_path)
+        print("copying anatomicals over.......")
+        print("{} ----------------> {} \n{} ----------------> {}".format(t1w_file, anat_output_path, t1w_desc_file, anat_output_path))
+        orig=os.path.join(anat_output_path, "{}_desc-preproc_T1w.nii.gz".format(sub))
+        highres=os.path.join(anat_output_path, "highres.nii.gz")
+        #print(highres)
+        os.rename(orig,highres)
+        print("{} renamed to ------------> {}".format(orig, highres))
+    except:
+        print(">>> error, passing")
+#________________________________________________________________________________________
+# This method, check_output_directories(sub), checks the ~/derivatives directory
+# and will make relevant directories if we need to {anat/, func/, motion_assesment/ Analysis/},
+# as an argument it takes the subject ID.
+#________________________________________________________________________________________
+
+
 
 def skull_strip(sub, func_input_path, func_output_path):
     print(">>>>---> starting bet on ", sub )
     try:
-        for nifti in glob.glob(os.path.join(func_input_path, '*_preproc.nii*')):
+        for nifti in glob.glob(os.path.join(func_input_path, '*-preproc_bold.nii.gz*')):
             # make our variables
+            print("NIFTI: ", nifti)
+            print(func_output_path)
             filename = nifti.split("/")[-1].split(".")[0]
             bet_name=filename+'_brain'
             # check if data exists already
@@ -87,16 +121,16 @@ def skull_strip(sub, func_input_path, func_output_path):
                 #shutil.copy(nifti, func_output_path)
                 os.system(bet_cmd)
     except FileNotFoundError:
-        pass 
+        pass
         #print("BAD FILE PASSING")
         #out_ = os.path.join(derivatives_dir, 'empty_subjects_betstrip.txt')
         #with open(out_, 'a') as f:
          #   f.write("Empty: %s \n "%(sub))
         #f.close()
-        
-        
-        
-        
+
+
+
+
 
 def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivatives_dir, func_output_path):
     print(">>>>---> Starting motion correction on ", sub)
@@ -105,11 +139,12 @@ def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivative
         for nifti in glob.glob(os.path.join(func_output_path, '*_brain.nii.gz')):
             filename=nifti.split('.')[0]
             file = filename.split("/")[-1]
-            new_filename = file.split("_bold_")[0]
-            outlier_path = "%s/%s_outlier_output.txt"%(motion_assessment_path, file)
-            plot_path = "%s/%s_fd_plot"%(motion_assessment_path, file)
-            confound_path = "%s/%s_confound.txt"%(motion_assessment_path, file)
-            #need to get identifier for tasks and runs --rn for bevel, need to specify for versatility 
+            new_filename = file.split("_bold_")[0]#.split("_space")[0]
+            outlier_path = "%s/%s_outlier_output.txt"%(motion_assessment_path, new_filename)
+            plot_path = "%s/%s_fd_plot"%(motion_assessment_path, new_filename)
+            confound_path = "%s/%s_confound.txt"%(motion_assessment_path, new_filename)
+            print(new_filename)
+            #need to get identifier for tasks and runs --rn for bevel, need to specify for versatility
             # set comparison param
             nvols_cmd="fslnvols " + nifti
             volume = subprocess.check_output(nvols_cmd, shell=True, encoding="utf-8")
@@ -117,11 +152,12 @@ def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivative
             comparator = int(volume) *.25
             ## RUN 'fsl_motion_outliers' TO RETRIEVE MOTION CORRECTION ANALYSIS
             outlier_cmd = "fsl_motion_outliers -i %s  -o %s --fd --thresh=%s -p %s -v > %s"%(filename, confound_path, arglist["MOCO"], plot_path, outlier_path)
-            print(">>-->  RUNNING FSL MOTION OUTLIERS ")
-            print("COMMAND NVOLS: ", nvols_cmd)
-            print("OUTLIER CMD: ", outlier_cmd)
+            #print(">>-->  RUNNING FSL MOTION OUTLIERS ")
+            #print("COMMAND NVOLS: ", nvols_cmd)
+            #print("OUTLIER CMD: ", outlier_cmd)
             os.system(outlier_cmd)
-        ## EXAMINE OUTLIER FILE AND GRAB RELEVANT DATA 
+
+        ## EXAMINE OUTLIER FILE AND GRAB RELEVANT DATA
             with open(outlier_path, 'r') as f:
                 lines=f.readlines()
                 statsA = lines[1].strip("\n") #maskmean
@@ -144,7 +180,7 @@ def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivative
             CURR_PLOT = PLOT.format(PLOTPATH=plotz)
             outfile.write(CURR_PLOT)
             print(">>>>----> ADDING PLOT TO HTML")
-                ## ADD FILE FOR GOOD SUBJECT 
+                ## ADD FILE FOR GOOD SUBJECT
         # --sometimes you have a great subject who didn't move
             if os.path.isfile(confound_path)==False:
                 os.system("touch %s"%confound_path)
@@ -158,7 +194,7 @@ def fd_check(sub, outfile, motion_assessment_path, out_bad_bold_list, derivative
                     myfile.write("%s/%s\n"%(derivatives_dir, file))
                     print("wrote bad file")
                 myfile.close()
-    except FileNotFoundError:   
+    except FileNotFoundError:
         print("FILE IS EMPTY, PASSING")
 
 
@@ -179,18 +215,20 @@ def get_motion_parameters(sub, fmriprep_path, motion_assessment_path, func_input
         outputdir = os.path.join(motion_assessment_path, "motion_parameters")
         if not os.path.exists(os.path.join(outputdir, 'motion_parameters')):
             os.makedirs(os.path.join(outputdir, 'motion_parameters'))
-        print(">>>>>>>FILEPATH: %s >>>>>>>>OUTPUT DIRECTORY: %s"%(func_input_path, outputdir))
+        #print(">>>>>>>FILEPATH: %s >>>>>>>>OUTPUT DIRECTORY: %s"%(func_input_path, outputdir))
         #os.chdir(filepath)
-        confounds = glob.glob(os.path.join(func_input_path, "*confounds.tsv"))
+        confounds = glob.glob(os.path.join(func_input_path, "*-confounds_regressors.tsv"))
         for run in confounds:
             print("-------> GRABBING NEW FILE:")
             print("FILE: ", run)
             df = pd.read_table(run)
-            moco_df=df[['X', 'Y', 'Z', 'RotX', 'RotY', 'RotZ']]
+            #trans_x, trans_y, trans_z, rot_x, rot_y, rot_z are the 6 rigid-body motion-correction parameters estimated by fMRIPrep
+            moco_df=df[['trans_x', 'trans_y', 'trans_z', 'rot_x', 'rot_y', 'rot_z']]
+            #moco_df=df[['X', 'Y', 'Z', 'RotX', 'RotY', 'RotZ']]
             moco_df.columns = ['moco0', 'moco1', 'moco2', 'moco3', 'moco4', 'moco5']
             print("DATAFRAME: \n ", moco_df.head())
-            filename = run.split('/')[-1].split("_bold_confounds")[0]
-            print("FILENAME:", filename)
+            filename = run.split('/')[-1].split("_desc")[0]
+            #print("FILENAME:", filename)
             write_files(filename, moco_df, outputdir)
             #print("RUN: ", run)
     except FileNotFoundError as not_found:
@@ -203,63 +241,64 @@ def get_motion_parameters(sub, fmriprep_path, motion_assessment_path, func_input
     for err in errors:
         #print("ERROR" + err)
         file = basedir+"/error_files_moco.txt"
+
         with open(file, 'a') as f:
             f.write("----------> FILE NOT FOUND FOR SUBJECT: " + err  + "\n")
             f.close()
-            
-            
-        
 
-    
+
+
+
+
 def main(SUB_IDS):
-    # SET PATHS 
-    fmriprep_dir = arglist["FPREP"]
-    derivatives_dir = arglist["DERIV"]
+    # SET PATHS
+
+    derivatives_dir = os.path.join(arglist["BIDS"], 'derivatives')
+    fmriprep_dir = os.path.join(derivatives_dir, 'fmriprep')
     datestamp=datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S")
 
-    # CASE CHECK FOR MULTIPLE-SESS 
+    # CASE CHECK FOR MULTIPLE-SESS
+
     if arglist["SES"] == False:
         outhtml = os.path.join(derivatives_dir,'bold_motion_QA_%s.html'%(datestamp))
         out_bad_bold_list = os.path.join(derivatives_dir,'TEST_%s.txt'%(datestamp))
     else:
         outhtml = os.path.join(derivatives_dir,'%s_bold_motion_QA_%s.html'%(arglist["SES"],datestamp))
         out_bad_bold_list = os.path.join(derivatives_dir,'%s_TEST_%s.txt'%(arglist["SES"], datestamp))
-        
+
     # OPEN HTML FILE IF CASE TRUE
     if args.MOCO != False:
         outfile = open(outhtml, 'a')
         TITLE="""<p><font size=7> <b> Motion Correction Check</b></font><br>"""
         outfile.write("%s"%TITLE)
-        
+
     # ITERATE THROUGH SUBJECTS AND PERFORM INDIVIDUAL BASED OPERATIONS
     for sub in sorted(SUB_IDS):
         if arglist["SES"] == False:
             out_dir = os.path.join(derivatives_dir, sub)
-            func_input_path=os.path.join(fmriprep_dir,sub, "func")
+            func_input_path=os.path.join(fmriprep_dir, sub, "func")
         else:
-            out_dir = os.path.join(derivatives_dir, sub, arglist["SES"])
-            func_input_path=os.path.join(fmriprep,sub,arglist["SES"], "func")
-    
+            out_dir = os.path.join(derivatives_dir, sub)
+            func_input_path=os.path.join(fmriprep_dir, sub, arglist["SES"], "func")
+
+        anat_fmri_path = os.path.join(fmriprep_dir,sub,'anat')
         anat_output_path=os.path.join(out_dir, 'anat')
         func_output_path=os.path.join(out_dir,'func')
         motion_assessment_path=os.path.join(out_dir,'func','motion_assessment')
-        
+
+        if args.DIR == True:
+            check_output_directories(sub,derivatives_dir, anat_output_path, func_output_path)
+        if args.ANAT != False:
+            move_anat(sub, anat_fmri_path, anat_output_path )
         if args.STRIP != False:
             skull_strip(sub, func_input_path, func_output_path)
         if args.MOCO != False:
             fd_check(sub,  outfile, motion_assessment_path, out_bad_bold_list, derivatives_dir, func_output_path)
         if args.MOTION == True:
             get_motion_parameters(sub, fmriprep_dir, motion_assessment_path, func_input_path)
-            
+
     if args.MOCO != False:
         outfile.close()
-
-    
-    
-    
-
-                 
-                 
 
 
 
@@ -270,14 +309,13 @@ if __name__ == "__main__":
     subjects = []
     set_parser()
     #get subjects
-    subs_dir = glob.glob(os.path.join(arglist["DERIV"], "sub-*"))
-    
 
-    for x in subs_dir:
-        sub_id = x.split("/")[-1]
-        subjects.append(sub_id)
+    subs_dir = glob.glob(os.path.join(arglist["BIDS"], "sub-*"))
+
+
+    subjects = [x.split("/")[-1] for x in subs_dir]
     subjects = sorted(subjects)
-    
+
     half = int(len(subjects)/2)
     B,C = subjects[:half], subjects[half:]
     pool = Pool(processes=2)
