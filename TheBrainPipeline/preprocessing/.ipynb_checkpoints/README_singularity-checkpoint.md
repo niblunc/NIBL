@@ -65,6 +65,6 @@ fMRI Prep<br>
 
           $ cd /projects/niblab/bids_projects
           $ sinteractive
-          $ singularity shell -B /projects/niblab/bids_projects:/mydirectory Singularity_Containers/fmriprep.simg
+          $ singularity shell -B /projects/niblab/bids_projects:/mydirectory Singularity_Containers/fmriprep_container.simg
           $ cd /mydirectory
           $ ls

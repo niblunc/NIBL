@@ -1,0 +1,1 @@
+heudiconv -d /test/Experiments/bbx/bids/sourcedata/DICOM/ses-{session}/{subject}/*dcm  -s sub-001 -ss 1 -f /test/Heuristic_Files/convertall.py -c none -o /test/Experiments/bbx/bids2o 
