@@ -60,16 +60,17 @@ def run_program():
         #print(new_data)
             print("Editing file ....... %s"%j)
         #open the json file
-    """        try:
+            try:
                 with open(j) as f:
                     data = json.load(f)
         #update the data file with our new data
                 data.update(new_data)
+                print(data)
         #add the new update to the json file
                 with open(j, 'w') as f:
                     json.dump(data, f, indent=2)
             except:
-                print("CANT EDIT FILE -- check permissions on folders ", j)"""
+                print("CANT EDIT FILE -- check permissions on folders ", j)
 
 
 def main():

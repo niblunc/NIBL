@@ -4,7 +4,7 @@
 import glob
 import os
 import shutil
-subjects=glob.glob("/projects/niblab/bids_projects/Experiments/Bevel/remake_space/derivatives/sub-*")
+subjects=glob.glob("/projects/niblab/bids_projects/Experiments/Bevel/derivatives/sub-088")
 for sub in subjects:
     REGSTD_DIR = os.path.join(sub, "func/Analysis/feat1/*run*.feat/reg_standard")
     regstandard_dirs = glob.glob(REGSTD_DIR)
@@ -21,7 +21,7 @@ for sub in subjects:
         print("--------------------------------------->>>> REMOVING MAT FILES")
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", file)
         os.remove(file)
-    REG_PATH = os.path.join(sub, "ses-1/func/Analysis/feat1/*run*.feat/reg")
+    REG_PATH = os.path.join(sub, "func/Analysis/feat1/*run*.feat/reg")
     REG_PATHS=glob.glob(REG_PATH)
     for file in REG_PATHS:
         path="%s/example_func2standard.mat"%file
