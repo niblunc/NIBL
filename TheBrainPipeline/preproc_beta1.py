@@ -55,25 +55,25 @@ def fd_check(args, ses_id, sub_list):
                 volume = subprocess.check_output(nvols_cmd, shell=True, encoding="utf-8")
                 volume = volume.strip()
                 comparator = int(volume) *.25
-                ## RUN 'fsl_motion_outliers' TO RETRIEVE MOTION CORRECTION ANALYSIS
-                outlier_cmd = "fsl_motion_outliers -i %s  -o %s --fd --thresh=%s -p %s -v > %s"%(filename, confound_path, args.FD, plot_path, outlier_path)
-                print(">>-->  RUNNING FSL MOTION OUTLIERS ")
-                #print("COMMAND NVOLS: ", nvols_cmd)
-                print("OUTLIER CMD: ", outlier_cmd)
-
-                if not os.path.exists(confound_path):
-                    os.system(outlier_cmd)
-
-                with open(outlier_path, 'r') as f:
-                    lines = f.readlines()
-                    statsA = lines[1].strip("\n")  # maskmean
-                    statsB = lines[3].strip("\n")  # metric range
-                    statsC = lines[4].strip("\n")  # outliers found
-                    if int(statsC.split(" ")[1]) > 0:
-                        statsD = lines[6].strip("\n")  # spikes found
-                    else:
-                        statsD = "\n"
-                f.close()
+                # ## RUN 'fsl_motion_outliers' TO RETRIEVE MOTION CORRECTION ANALYSIS
+                # outlier_cmd = "fsl_motion_outliers -i %s  -o %s --fd --thresh=%s -p %s -v > %s"%(filename, confound_path, args.FD, plot_path, outlier_path)
+                # print(">>-->  RUNNING FSL MOTION OUTLIERS ")
+                # #print("COMMAND NVOLS: ", nvols_cmd)
+                # print("OUTLIER CMD: ", outlier_cmd)
+                #
+                # if not os.path.exists(confound_path):
+                #     os.system(outlier_cmd)
+                #
+                # with open(outlier_path, 'r') as f:
+                #     lines = f.readlines()
+                #     statsA = lines[1].strip("\n")  # maskmean
+                #     statsB = lines[3].strip("\n")  # metric range
+                #     statsC = lines[4].strip("\n")  # outliers found
+                #     if int(statsC.split(" ")[1]) > 0:
+                #         statsD = lines[6].strip("\n")  # spikes found
+                #     else:
+                #         statsD = "\n"
+                # f.close()
 
                 plotz = plot_path + ".png"
                 FILEINFO = """<p><font size=6> <b>{CURR_FILENAME} </b></font><br>"""
